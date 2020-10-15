@@ -20,10 +20,7 @@ From: julia:1.5.2-buster
   apt-get -qq install libxrender1 libxext6 libgl1-mesa-glx libqt5widgets5 xvfb
   apt-get clean && rm -rf /var/lib/apt/lists/*
 
-  JULIA_DEPOT_PATH=/usr/local/share/julia && \
-  julia -e 'using Pkg; Pkg.instantiate(); Pkg.API.precompile()'
-
   mkdir -m 0777 /data
 
 %runscript
-  xvfb-run -- julia -e 'versioninfo()'
+  xvfb-run -- "@"
