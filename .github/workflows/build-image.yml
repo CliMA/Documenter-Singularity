@@ -8,15 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Set up Go 1.12
+    - name: Set up Go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.12
+        go-version: 1.15
       id: go
 
     - name: Install Dependencies
       run: |
-        sudo apt-get update && sudo apt-get install -y \
+        sudo apt-get update || true
+        sudo apt-get install -y \
           build-essential \
           libssl-dev \
           uuid-dev \
@@ -46,10 +47,9 @@ jobs:
 
     - name: Build Container
       env:
-        SINGULARITY_RECIPE: Singularity
-        OUTPUT_CONTAINER: container.sif
+        SINGULARITY_RECIPE: Documenter
+        OUTPUT_CONTAINER: documenter.sif
       run: |
-       ls 
        if [ -f "${SINGULARITY_RECIPE}" ]; then
             sudo -E singularity build ${OUTPUT_CONTAINER} ${SINGULARITY_RECIPE}
        else
