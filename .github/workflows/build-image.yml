@@ -3,7 +3,7 @@ name: Singularity Build
 on: [push]
 
 env:
-  SINGULARITY_VERSION: 3.6
+  SINGULARITY_VERSION: 3.6.4
   SINGULARITY_USERNAME: jakebolewski
   SINGULARITY_COLLECTION: clima
   SINGULARITY_RECIPE: Documenter
