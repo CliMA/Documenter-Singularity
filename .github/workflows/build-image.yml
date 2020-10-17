@@ -65,4 +65,6 @@ jobs:
         SYLABS_TOKEN: ${{ secrets.SYLABS_TOKEN }}
       run: |
         printf '%s\n' "$SYLABS_TOKEN" | singularity remote login
-        singularity push -U "${OUTPUT_CONTAINER}" "library://${SINGULARITY_USERNAME}/${SINGULARITY_COLLECTION}/${SINGULARITY_OUTPUT_CONTAINER}:latest"
+        singularity push -U \
+          "${SINGULARITY_OUTPUT_CONTAINER}" \
+          "library://${SINGULARITY_USERNAME}/${SINGULARITY_COLLECTION}/${SINGULARITY_OUTPUT_CONTAINER}:latest"
