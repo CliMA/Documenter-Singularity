@@ -67,10 +67,10 @@ jobs:
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
-        with:
-          name: "${SINGULARITY_OUTPUT_CONTAINER}"
-          path: "${SINGULARITY_OUTPUT_CONTAINER}"
-          retention-days: 3
+      with:
+        name: ${{ env.SINGULARITY_OUTPUT_CONTAINER }}
+        path: ${{ env.SINGULARITY_OUTPUT_CONTAINER }}
+        retention-days: 3
 
     - name: Deploy Container
       if: startsWith( github.ref, 'refs/tags/')
