@@ -1,6 +1,10 @@
 name: Singularity Build
 
-on: [push]
+on:
+  pull_request:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+*'
 
 env:
   SINGULARITY_VERSION: 3.6.4
@@ -60,11 +64,21 @@ jobs:
            echo "Present working directory: $PWD"
            ls
        fi
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+        with:
+          name: "${SINGULARITY_OUTPUT_CONTAINER}"
+          path: "${SINGULARITY_OUTPUT_CONTAINER}"
+          retention-days: 3
+
     - name: Deploy Container
+      if: startsWith( github.ref, 'refs/tags/')
       env:
         SYLABS_TOKEN: ${{ secrets.SYLABS_TOKEN }}
       run: |
+        RELEASE_VERSION="${GITHUB_REF#refs/*/}"
         printf '%s\n' "$SYLABS_TOKEN" | singularity remote login
         singularity push -U \
           "${SINGULARITY_OUTPUT_CONTAINER}" \
-          "library://${SINGULARITY_USERNAME}/${SINGULARITY_COLLECTION}/${SINGULARITY_OUTPUT_CONTAINER}:latest"
+          "library://${SINGULARITY_USERNAME}/${SINGULARITY_COLLECTION}/${SINGULARITY_OUTPUT_CONTAINER}:${RELEASE_VERSION}"
