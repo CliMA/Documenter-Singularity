@@ -2,6 +2,13 @@ name: Singularity Build
 
 on: [push]
 
+env:
+  SINGULARITY_VERSION: 3.6
+  SINGULARITY_USERNAME: jakebolewski
+  SINGULARITY_COLLECTION: clima
+  SINGULARITY_RECIPE: Documenter
+  SINGULARITY_OUTPUT_CONTAINER: documenter.sif
+
 jobs:
   build:
     name: Build
@@ -28,7 +35,6 @@ jobs:
 
     - name: Install Singularity
       env:
-        SINGULARITY_VERSION: 3.2.1
         GOPATH: /tmp/go
       run: |
         mkdir -p $GOPATH
@@ -46,14 +52,18 @@ jobs:
       uses: actions/checkout@v1
 
     - name: Build Container
-      env:
-        SINGULARITY_RECIPE: Documenter
-        OUTPUT_CONTAINER: documenter.sif
       run: |
        if [ -f "${SINGULARITY_RECIPE}" ]; then
-            sudo -E singularity build ${OUTPUT_CONTAINER} ${SINGULARITY_RECIPE}
+            sudo -E singularity build ${SINGULARITY_OUTPUT_CONTAINER} ${SINGULARITY_RECIPE}
        else
            echo "${SINGULARITY_RECIPE} is not found."
            echo "Present working directory: $PWD"
            ls
        fi
+    - name: Deploy Container
+      env:
+        SYSLABS_TOKEN: ${{ secrets.SYSLABS_TOKEN }}
+      run: |
+        cat "${SYSLABS_TOKEN}" | singularity remote login
+        singularity push -U ${OUTPUT_CONTAINER} \
+        library://${SINGULARITY_USERNAME}/${SINGULARITY_COLLECTION}/${SINGULARITY_OUTPUT_CONTAINER}:latest
